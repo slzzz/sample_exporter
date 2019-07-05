@@ -26,7 +26,7 @@ func metrics(w http.ResponseWriter, r *http.Request) {
 	nv, _ := net.IOCounters(true)
 	l, _ := load.Avg()
 	count, _ := cpu.Counts(true)
-	fmt.Fprintf(w, "Mem_UsedPercent %v\nCpu_UsedPercent %v\nDisk_UsedPercent_/ %v\nDisk_Inodes_UsedPercent_/ %v\nUptime %d\nHostname %s\nBytesRecv %v\nBytesSend %v\nLoad1 %v\nLoad5 %v\nLoad15 %v\nCpu_Count %d\n",
+	fmt.Fprintf(w, "Mem_UsedPercent %v\nCpu_UsedPercent %v\nDisk_UsedPercent %v\nDisk_Inodes_UsedPercent %v\nUptime %d\nHostname %s\nBytesRecv %v\nBytesSend %v\nLoad1 %v\nLoad5 %v\nLoad15 %v\nCpu_Count %d\n",
 		m.UsedPercent, c[0], d.UsedPercent, d.InodesUsedPercent, h.Uptime, h.Hostname, nv[0].BytesRecv, nv[0].BytesSent, l.Load1, l.Load5, l.Load15, count)
 }
 
