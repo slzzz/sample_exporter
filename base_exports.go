@@ -15,19 +15,27 @@ import (
 	"strconv"
 	// "reflect"
 	"flag"
+	"runtime"
 	"time"
 )
 
 func metrics(w http.ResponseWriter, r *http.Request) {
 	m, _ := mem.VirtualMemory()
 	c, _ := cpu.Percent(time.Second, false)
-	d, _ := disk.Usage("/")
 	h, _ := host.Info()
 	nv, _ := net.IOCounters(true)
 	l, _ := load.Avg()
 	count, _ := cpu.Counts(true)
-	fmt.Fprintf(w, "Mem_UsedPercent %v\nCpu_UsedPercent %v\nDisk_UsedPercent %v\nDisk_Inodes_UsedPercent %v\nUptime %d\nHostname %s\nBytesRecv %v\nBytesSend %v\nLoad1 %v\nLoad5 %v\nLoad15 %v\nCpu_Count %d\n",
-		m.UsedPercent, c[0], d.UsedPercent, d.InodesUsedPercent, h.Uptime, h.Hostname, nv[0].BytesRecv, nv[0].BytesSent, l.Load1, l.Load5, l.Load15, count)
+
+	if runtime.GOOS == "windows" {
+		d, _ := disk.Usage("c:/")
+		fmt.Fprintf(w, "Mem_UsedPercent %v\nCpu_UsedPercent %v\nDisk_UsedPercent %v\nDisk_Inodes_UsedPercent %v\nUptime %d\nBootTime %d\nBytesRecv %v\nBytesSend %v\nLoad1 %v\nLoad5 %v\nLoad15 %v\nCpu_Count %d\n",
+			m.UsedPercent, c[0], d.UsedPercent, d.InodesUsedPercent, h.Uptime, h.BootTime, nv[0].BytesRecv, nv[0].BytesSent, l.Load1, l.Load5, l.Load15, count)
+	} else {
+		d, _ := disk.Usage("/")
+		fmt.Fprintf(w, "Mem_UsedPercent %v\nCpu_UsedPercent %v\nDisk_UsedPercent %v\nDisk_Inodes_UsedPercent %v\nUptime %d\nBootTime %d\nBytesRecv %v\nBytesSend %v\nLoad1 %v\nLoad5 %v\nLoad15 %v\nCpu_Count %d\n",
+			m.UsedPercent, c[0], d.UsedPercent, d.InodesUsedPercent, h.Uptime, h.BootTime, nv[0].BytesRecv, nv[0].BytesSent, l.Load1, l.Load5, l.Load15, count)
+	}
 }
 
 func HelloServer(w http.ResponseWriter, req *http.Request) {
